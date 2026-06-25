@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>학식</title>
+
+  <style>
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+      border: none;
+      background: #eee;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    button.active {
+      background: #ff41df;
+      color: white;
+      font-weight: bold;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .card h3 {
+      margin: 0 0 8px 0;
+    }
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      gap: 10px;
+    }
+
+    .price {
+      color: #ff41df ;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1 id = "title"> 오늘의 학식</h1>
+
+<div id="tabs"></div>
+<div id="app"></div>
+
+<script>
+
+const today = new Date();
+
+const month = today.getMonth()+1;
+const date = today.getDate();
+const day = ["일","월","화","수","목","금","토"][today.getDay()];
+
+document.getElementById("title").textContent = 
+`${month}월 ${date}일 (${day}) 오늘의 학식 !`;
+
+
+fetch("menu.json")
+  .then(res => res.json())
+  .then(data => {
+
+    const app = document.getElementById("app");
+    const tabs = document.getElementById("tabs");
+
+    const categories = [...new Set(data.map(item => item.category))];
+
+    const renderCategory = (category) => {
+
+      document.querySelectorAll("#tabs button")
+        .forEach(b => b.classList.remove("active"));
+
+      const activeBtn = [...tabs.children].find(
+        b => b.textContent === category
+      );
+
+      if (activeBtn) activeBtn.classList.add("active");
+
+      app.innerHTML = "";
+
+      const filteredData = data.filter(
+        item => item.category === category
+      );
+
+      filteredData.forEach(item => {
+        const div = document.createElement("div");
+        div.classList.add("card");
+
+        div.innerHTML = `
+          <h3>${item.restaurant}</h3>
+          ${Array.isArray(item.menu)
+            ? item.menu.map(m => {
+
+                const name =
+                  typeof m === "string"
+                    ? m
+                    : (m.name ?? m.title ?? "");
+
+                const priceRaw =
+                  typeof m === "object"
+                    ? (m.price ?? m.cost)
+                    : "";
+
+                const price =
+                  priceRaw !== undefined && priceRaw !== null
+                  && priceRaw !==""
+                    ?(typeof priceRaw ==="number"
+                      ? priceRaw.toLocaleString()+"원"
+                      :priceRaw+"원")
+                    :null;
+
+                return `
+                  <div class="menu-item">
+                    <span>${name}</span>
+                    <span class="price">${price??""}</span>
+                  </div>
+                `;
+              }).join("")
+            : ""
+          }
+        `;
+
+        app.appendChild(div);
+      });
+    };
+
+    categories.forEach(category => {
+      const btn = document.createElement("button");
+      btn.textContent = category;
+
+      btn.onclick = () => renderCategory(category);
+
+      tabs.appendChild(btn);
+    });
+
+    if (categories.length > 0) {
+      renderCategory(categories[0]);
+    }
+
+  });
+</script>
+
+</body>
+</html>
