@@ -119,33 +119,32 @@ fetch("menu.json")
     const restaurantTabs = document.getElementById("restaurantTabs");
 
     function render(day, category) {
-
       app.innerHTML = "";
-
-      if (!data[day]) return;
-
-      const filteredData = data[day].filter(
-        item => item.category === category
-      );
-
+    
+      if (!Array.isArray(data[day])) return;
+    
+      const filteredData = data[day].filter(item => item.category === category);
+    
       filteredData.forEach(item => {
-
+        const menuList = Array.isArray(item.menu)
+          ? item.menu
+          : (item.menu?.items || []);
+    
         const div = document.createElement("div");
         div.classList.add("card");
-
+    
         div.innerHTML = `
           <h3>${item.restaurant}</h3>
-          ${(item.menu || []).map(m => `
+          ${menuList.map(m => `
             <div class="menu-item">
               <span>${m}</span>
             </div>
           `).join("")}
         `;
-
+    
         app.appendChild(div);
       });
     }
-
     days.forEach(dayName => {
 
       const btn = document.createElement("button");
