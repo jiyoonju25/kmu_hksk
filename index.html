@@ -106,7 +106,7 @@ document.getElementById("title").textContent =
 `${month}월 ${date}일 (${day}) 오늘의 학식 !`;
 
 
-fetch("menu.json")
+fetch("/kmu-hksk/menu.json")
   .then(res => res.json())
   .then(data => {
 
