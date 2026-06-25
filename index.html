@@ -45,6 +45,42 @@
       color: #ff41df ;
       font-weight: bold;
     }
+
+    #restaurantTabs{
+      margin : 20px 0;
+      border-bottom : 1px solid #ddd;
+      display : flex;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    .restaurant-btn{
+      background : transparent;
+      border : none;
+      font-size : 16px;
+      font-weight : 600;
+      padding : 8px 12px;
+      cursor : pointer;
+      color : #666;
+      position : relative;
+
+    }
+
+    .restaurant-btn:not(:last-child)::after{
+      content:"";
+      position:absolute;
+      right: 0;
+      top: 25%;
+      width : 1px;
+      height: 50%;
+      background : #ddd;
+
+    }
+    .restaurant-btn.active{
+      background : transparent;
+      color:#ff41df
+    }
+
   </style>
 </head>
 
@@ -53,6 +89,9 @@
 <h1 id = "title"> 오늘의 학식</h1>
 
 <div id="tabs"></div>
+
+<div id = "restaurantTabs"></div>
+
 <div id="app"></div>
 
 <script>
@@ -74,79 +113,100 @@ fetch("menu.json")
     const app = document.getElementById("app");
     const tabs = document.getElementById("tabs");
 
-    const categories = [...new Set(data.map(item => item.category))];
 
-    const renderCategory = (category) => {
+    const days = ["일","월","화","수","목","금","토"];
 
-      document.querySelectorAll("#tabs button")
-        .forEach(b => b.classList.remove("active"));
+    const restaurantTabs = document.getElementById("restaurantTabs");
 
-      const activeBtn = [...tabs.children].find(
-        b => b.textContent === category
-      );
-
-      if (activeBtn) activeBtn.classList.add("active");
+    function render(day, category) {
 
       app.innerHTML = "";
 
-      const filteredData = data.filter(
+      if (!data[day]) return;
+
+      const filteredData = data[day].filter(
         item => item.category === category
       );
 
       filteredData.forEach(item => {
+
         const div = document.createElement("div");
         div.classList.add("card");
 
         div.innerHTML = `
           <h3>${item.restaurant}</h3>
-          ${Array.isArray(item.menu)
-            ? item.menu.map(m => {
-
-                const name =
-                  typeof m === "string"
-                    ? m
-                    : (m.name ?? m.title ?? "");
-
-                const priceRaw =
-                  typeof m === "object"
-                    ? (m.price ?? m.cost)
-                    : "";
-
-                const price =
-                  priceRaw !== undefined && priceRaw !== null
-                  && priceRaw !==""
-                    ?(typeof priceRaw ==="number"
-                      ? priceRaw.toLocaleString()+"원"
-                      :priceRaw+"원")
-                    :null;
-
-                return `
-                  <div class="menu-item">
-                    <span>${name}</span>
-                    <span class="price">${price??""}</span>
-                  </div>
-                `;
-              }).join("")
-            : ""
-          }
+          ${item.menu.map(m => `
+            <div class="menu-item">
+              <span>${m}</span>
+            </div>
+          `).join("")}
         `;
 
         app.appendChild(div);
       });
-    };
+    }
 
-    categories.forEach(category => {
+    days.forEach(dayName => {
+
       const btn = document.createElement("button");
-      btn.textContent = category;
+      btn.textContent = dayName;
 
-      btn.onclick = () => renderCategory(category);
+      if (dayName === day) {
+        btn.classList.add("active");
+      }
 
-      tabs.appendChild(btn);
+      btn.onclick = () => {
+
+        document.querySelectorAll("#tabs button")
+          .forEach(b => b.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        restaurantTabs.innerHTML = "";
+
+        const categories = [
+          ...new Set(
+            data[dayName].map(item => item.category)
+          )
+        ];
+
+        categories.forEach(category => {
+          const btn = document.createElement("button");
+
+          btn.textContent = category;
+          btn.classList.add("restaurant-btn");
+          btn.onclick = () =>{
+            document
+              .querySelectorAll(".restaurant-btn")
+              .forEach(b => b.classList.remove("active"));
+
+            btn.classList.add("active");
+            render(dayName,category);
+          };
+
+          restaurantTabs.appendChild(btn);
+        });
+
+        if (categories.includes("학생식당")){
+          const defaultBtn = 
+            [...restaurantTabs.children]
+              .find(b=>b.textContent == "학생식당");
+          
+          if(defaultBtn){
+            defaultBtn.classList.add("active");
+            render(dayName,"학생식당");
+          }
+        }
+      };
+
+    tabs.appendChild(btn);
     });
 
-    if (categories.length > 0) {
-      renderCategory(categories[0]);
-    }
+    //
+
+
+
+    document.querySelectorAll("#tabs button")[today.getDay()].click();
 
   });
 </script>
