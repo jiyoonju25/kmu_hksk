@@ -164,6 +164,12 @@ fetch("./menu.json")
 
         restaurantTabs.innerHTML = "";
 
+        if (!data[dayName]) {
+          app.innerHTML = "<div class='card'>해당 요일의 학식 데이터가 없습니다.</div>";
+          return;
+        }
+
+        
         const categories = [
           ...new Set(
             data[dayName].map(item => item.category)
