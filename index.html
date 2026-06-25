@@ -5,6 +5,22 @@
   <title>학식</title>
 
   <style>
+    #main-title{
+      font-size : 26px;
+      font-weight : bold;
+      margin-top:10px;
+      margin-bottom : 15px;
+    }
+
+    #title{
+      font-size : 15px;
+      font-weight : bold;
+      color : #ff41df;
+      margin-top:25px;
+      margin-bottom : 25px;
+    }
+
+
     button {
       margin: 5px;
       padding: 8px 12px;
@@ -86,9 +102,10 @@
 
 <body>
 
-<h1 id = "title"> 오늘의 학식</h1>
+<h1 id = "main-title"> 이번 주 학식</h1>
 
 <div id="tabs"></div>
+<div id ="title">오늘의 메뉴</div>
 
 <div id = "restaurantTabs"></div>
 
@@ -103,7 +120,7 @@ const date = today.getDate();
 const day = ["일","월","화","수","목","금","토"][today.getDay()];
 
 document.getElementById("title").textContent = 
-`${month}월 ${date}일 (${day}) 오늘의 학식 !`;
+`${month}월 ${date}일 (${day}) 메뉴 !`;
 
 
 fetch("./menu.json")
@@ -146,7 +163,7 @@ fetch("./menu.json")
       });
     }
 
-    days.forEach(dayName => {
+    days.forEach((dayName, index) => {
 
       const btn = document.createElement("button");
       btn.textContent = dayName;
@@ -156,6 +173,15 @@ fetch("./menu.json")
       }
 
       btn.onclick = () => {
+        
+        const targetDate = new Date();
+        const diff = index - today.getDay();
+        targetDate.setDate(today.getDate()+diff);
+
+        const m = targetDate.getMonth() +1 ;
+        const d = targetDate.getDate();
+
+        document.getElementById("title").textContent=`${m}월 ${d}일 (${dayName}) 메뉴 !`;
 
         document.querySelectorAll("#tabs button")
           .forEach(b => b.classList.remove("active"));
