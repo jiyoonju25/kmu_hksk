@@ -135,7 +135,7 @@ fetch("menu.json")
 
         div.innerHTML = `
           <h3>${item.restaurant}</h3>
-          ${item.menu.map(m => `
+          ${(item.menu || []).map(m => `
             <div class="menu-item">
               <span>${m}</span>
             </div>
