@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>학식</title>
+
+  <style>
+    #main-title{
+      font-size : 26px;
+      font-weight : bold;
+      margin-top:10px;
+      margin-bottom : 15px;
+    }
+
+    #title{
+      font-size : 15px;
+      font-weight : bold;
+      color : #ff41df;
+      margin-top:25px;
+      margin-bottom : 25px;
+    }
+
+
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+      border: none;
+      background: #eee;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    button.active {
+      background: #ff41df;
+      color: white;
+      font-weight: bold;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .card h3 {
+      margin: 0 0 8px 0;
+    }
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      gap: 10px;
+    }
+
+    .price {
+      color: #ff41df ;
+      font-weight: bold;
+    }
+
+    #restaurantTabs{
+      margin : 20px 0;
+      border-bottom : 1px solid #ddd;
+      display : flex;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    .restaurant-btn{
+      background : transparent;
+      border : none;
+      font-size : 16px;
+      font-weight : 600;
+      padding : 8px 12px;
+      cursor : pointer;
+      color : #666;
+      position : relative;
+
+    }
+
+    .restaurant-btn:not(:last-child)::after{
+      content:"";
+      position:absolute;
+      right: 0;
+      top: 25%;
+      width : 1px;
+      height: 50%;
+      background : #ddd;
+
+    }
+    .restaurant-btn.active{
+      background : transparent;
+      color:#ff41df
+    }
+
+  </style>
+</head>
+
+<body>
+
+<h1 id = "main-title"> 이번 주 학식</h1>
+
+<div id="tabs"></div>
+<div id ="title">오늘의 메뉴</div>
+
+<div id = "restaurantTabs"></div>
+
+<div id="app"></div>
+
+<script>
+
+const today = new Date();
+
+const month = today.getMonth()+1;
+const date = today.getDate();
+const day = ["일","월","화","수","목","금","토"][today.getDay()];
+
+document.getElementById("title").textContent = 
+`${month}월 ${date}일 (${day}) 메뉴 !`;
+
+
+fetch("./menu.json")
+  .then(res => res.json())
+  .then(data => {
+
+    const app = document.getElementById("app");
+    const tabs = document.getElementById("tabs");
+
+
+    const days = ["일","월","화","수","목","금","토"];
+
+    const restaurantTabs = document.getElementById("restaurantTabs");
+
+    function render(day, category) {
+
+      app.innerHTML = "";
+
+      if (!data[day]) return;
+
+      const filteredData = data[day].filter(
+        item => item.category === category
+      );
+
+      filteredData.forEach(item => {
+
+        const div = document.createElement("div");
+        div.classList.add("card");
+
+        div.innerHTML = `
+          <h3>${item.restaurant}</h3>
+          ${(item.menu || []).map(m => `
+            <div class="menu-item">
+              <span>${m}</span>
+            </div>
+          `).join("")}
+        `;
+
+        app.appendChild(div);
+      });
+    }
+
+    days.forEach((dayName, index) => {
+
+      const btn = document.createElement("button");
+      btn.textContent = dayName;
+
+      if (dayName === day) {
+        btn.classList.add("active");
+      }
+
+      btn.onclick = () => {
+        
+        const targetDate = new Date();
+        const diff = index - today.getDay();
+        targetDate.setDate(today.getDate()+diff);
+
+        const m = targetDate.getMonth() +1 ;
+        const d = targetDate.getDate();
+
+        document.getElementById("title").textContent=`${m}월 ${d}일 (${dayName}) 메뉴 !`;
+
+        document.querySelectorAll("#tabs button")
+          .forEach(b => b.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        restaurantTabs.innerHTML = "";
+
+        if (!data[dayName]) {
+          app.innerHTML = "<div class='card'>해당 요일의 학식 데이터가 없습니다.</div>";
+          return;
+        }
+
+        
+        const categories = [
+          ...new Set(
+            data[dayName].map(item => item.category)
+          )
+        ];
+
+        categories.forEach(category => {
+          const btn = document.createElement("button");
+
+          btn.textContent = category;
+          btn.classList.add("restaurant-btn");
+          btn.onclick = () =>{
+            document
+              .querySelectorAll(".restaurant-btn")
+              .forEach(b => b.classList.remove("active"));
+
+            btn.classList.add("active");
+            render(dayName,category);
+          };
+
+          restaurantTabs.appendChild(btn);
+        });
+
+        if (categories.includes("학생식당")){
+          const defaultBtn = 
+            [...restaurantTabs.children]
+              .find(b=>b.textContent == "학생식당");
+          
+          if(defaultBtn){
+            defaultBtn.classList.add("active");
+            render(dayName,"학생식당");
+          }
+        }
+      };
+
+    tabs.appendChild(btn);
+    });
+
+    //
+
+    const firstBtn = document.querySelectorAll("#tabs button")[today.getDay()];
+    if (firstBtn) firstBtn.click();
+  });
+</script>
+
+</body>
+</html>
