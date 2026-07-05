@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 from datetime import datetime
+import re
 import json
 import os
 
@@ -20,6 +21,44 @@ day_map = {
     "토":7
 }
 
+def is_price(text):
+    return re.match(r".*￦\s?\d+",text)
+
+def parse_menu (menu_list):
+    sets=[]
+    current_items = []
+    current_name = None
+
+
+    for item in menu_list:
+        if item.startswith("[") and item.endswith("]"):
+            continue
+        if "￦" in item:
+            match = re.search(r"￦\s?(\d+)",item)
+            
+            if not match : continue
+
+            price = int(match.group(1))
+            
+            clean_item = re.sub(r"￦\s?\d+","",item).strip()
+            if clean_item:
+                current_items.append(clean_item)
+            
+            sets.append({
+                "name":current_name or (current_items[0] if current_items else "메뉴"),
+                "price":price,
+                "items":current_items.copy()
+            })
+            
+
+            current_items=[]
+            current_name = None
+            continue
+        
+        current_items.append(item)
+    return sets
+
+
 result = {}
 
 for day,column in day_map.items():
@@ -37,7 +76,7 @@ for day,column in day_map.items():
         for tr in table.find_all("tr"):
             tds = tr.find_all("td")
 
-            if len(tds) != 8:
+            if len(tds)<= column:
                 continue
 
             restaurant = tds[0].get_text(" ", strip=True)
@@ -49,12 +88,19 @@ for day,column in day_map.items():
             if "￦" not in menu_text:
                 continue
 
-            menu_lines = [m.strip() for m in menu_text.split("\n") if m.strip()]
+            menu_lines = [
+                m.strip()
+                for m in menu_text.split("\n")
+                if m.strip()
+            ]        
 
+            parsed = parse_menu(menu_lines)
+
+            menu_lines = [m for m in menu_lines if m is not None]
             result[day].append({
                 "category" : title.get_text(strip=True).split("(")[0],
-                "restaurant": restaurant,
-                "menu": menu_lines
+                "restaurant" : restaurant,
+                "sets" : parsed
             })
 
 base = os.path.dirname(os.path.abspath(__file__))
