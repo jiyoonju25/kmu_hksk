@@ -1,47 +1,232 @@
-<!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>학식</title>
+  <head>  
+    <meta charset="UTF-8">  
+    <title>HKSK</title>  
+<style>
+    
+    body.theme-pink{
+      --bg : #fafafa;
+      --surface : #ffffff;
+      --border: #f2f2f2;
 
-  <style>
+      --accent: #ff41df;
+      --lightaccent: #ffebfc;
+
+
+      --text:#222222;
+      --text-secondary : #666;
+    }
+
+    body.theme-blue{
+      --bg : #fafafa;
+      --surface : #ffffff;
+      --border: #f2f2f2;
+
+      --accent: #59b7ff;
+      --lightaccent: #ddf0ff;
+
+      --text:#222222;
+      --text-secondary : #666;
+    }
+
+    body.theme-green{
+      --bg : #fafafa;
+      --surface : #ffffff;
+      --border: #f2f2f2;
+
+      --accent: #6ba060;
+      --lightaccent: #d3e2cf;
+
+
+      --text:#222222;
+      --text-secondary : #666;
+    }
+
+    body.theme-black{
+      --bg : #fafafa;
+      --surface : #ffffff;
+      --border: #f2f2f2;
+
+      --accent: #000000;
+      --lightaccent: #939393;
+
+
+      --text:#222222;
+      --text-secondary : #666;
+    }
+
+
+    body{
+      margin : 0 auto;
+      padding : 16px;
+      font-family : sans-serif;
+      background:var(--bg);
+      overflow-x: hidden;
+    }
+
+    #header {
+      display:flex;
+      justify-content :space-between;
+      align-items: center;
+      
+      position:relative;
+      background : var(--accent);
+
+      box-sizing: border-box;
+      width : 100%;
+      padding: 50px;
+      margin-bottom: 50px;
+      
+    }
+
+    .toggle-container{
+      display:flex;
+      justify-content: flex-end;
+      
+      gap:15px;
+    }
+
+    .toggle-wrapper{
+      display:flex;
+      justify-content:space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .toggle-label{
+      font-size : 36px;
+      font-weight :bold;
+      color :var(--text);
+      min-width : 0;
+      text-align :left;
+      flex:1;
+    }
+
+    .switch{
+      position :relative;
+      display : inline-block;
+      width : 140px;
+      height :80px;
+    }
+
+    .switch input{
+      opacity: 0;
+      width:0;
+      height: 0;
+    }
+
+    .slider{
+      position: absolute;
+      cursor:pointer;
+      top:0; left:0; right:0; bottom:0;
+      background-color: var(--border);
+      transition: .3s;
+      box-shadow : inset 0 2px 5px rgba(0,0,0,0.05)
+    }
+
+    .slider:before{
+      position: absolute;
+      content: "";
+      height : 68px;
+      width : 68px;
+      left : 6px;
+      bottom : 6px;
+      background-color : var(--surface);
+      transition : .3s;
+      border-radius: 50%;
+      box-shadow : 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    input:checked + .slider{
+      background-color : var(--border);
+    }
+    input:checked +.slider:before{
+      transform : translateX(60px);
+    }
+    .slider.round{
+      border-radius : 40px;
+    }
+    .restaurant-btn.disabled{
+      opacity: 0.5;
+      pointer-events:none;
+    }
+
+    #buttonTabs button.disabled{
+      opacity: 0.5;
+      pointer-events:none;
+    }
+
+
     #main-title{
-      font-size : 26px;
+      color : var(--bg);
+      font-size : 50px;
       font-weight : bold;
       margin-top:10px;
       margin-bottom : 15px;
+      margin-left: 40px;
     }
 
     #title{
-      font-size : 15px;
+      font-size : 70px;
       font-weight : bold;
-      color : #ff41df;
+      color : var(--accent);
       margin-top:25px;
-      margin-bottom : 25px;
+      margin-bottom : 30px; 
+      text-align: center;
     }
 
+    
+    #operatingHours {
+      text-align: center;
+      font-size: 50px;
+      color: var(--text-secondary);
+      margin-bottom: 30px;
+      font-weight: 500;
+      background: var(--border);
+      padding: 15px;
+      border-radius: 15px;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-    button {
-      margin: 5px;
-      padding: 8px 12px;
+    #app{
+      display:grid;
+      grid-template-columns: repeat(2,1fr);
+      gap:12px;
+    }
+
+    #buttonTabs {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    #buttonTabs button {
+      font-size : 50px;
+      margin: 20px;
+      padding: 30px 40px;
       border: none;
-      background: #eee;
+      background: var(--border);
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 35px;
+      margin-bottom: 50px;
     }
 
-    button.active {
-      background: #ff41df;
-      color: white;
+    #buttonTabs button.active {
+      background: var(--accent);
+      color: var(--bg);
       font-weight: bold;
     }
 
     .card {
-      background: white;
-      border: 1px solid #eee;
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin: 10px 0;
+      font-size : 45px;
+      background: var(--surface);
+      border: 1px solid var(--bg);
+      border-radius: 20px;
+      padding: 20px 30px;
+      margin: 0;
+      min-width : 0;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
@@ -58,65 +243,192 @@
     }
 
     .price {
-      color: #ff41df ;
+      color: var(--accent) ;
       font-weight: bold;
     }
 
     #restaurantTabs{
       margin : 20px 0;
-      border-bottom : 1px solid #ddd;
+      border-bottom : 3px solid var(--border);
       display : flex;
       flex-wrap: wrap;
+      justify-content: center;
       align-items:center;
+      margin-bottom: 50px;
     }
 
     .restaurant-btn{
       background : transparent;
       border : none;
-      font-size : 16px;
+      font-size : 55px;
       font-weight : 600;
-      padding : 8px 12px;
+      padding : 8px 50px;
       cursor : pointer;
-      color : #666;
+      color : var(--text-secondary);
       position : relative;
-
     }
 
-    .restaurant-btn:not(:last-child)::after{
+    .restaurant-btn + .restaurant-btn::after {
       content:"";
-      position:absolute;
-      right: 0;
-      top: 25%;
+      position: absolute;
+      left:0;
+      top:50%;
+      transform: translateY(-50%);
       width : 1px;
-      height: 50%;
-      background : #ddd;
+      height : 50%;
+      background : var(--text-secondary);
+    }  
 
-    }
     .restaurant-btn.active{
       background : transparent;
-      color:#ff41df
+      color: var(--accent)
     }
 
     .menu-set:not(:last-child){
-      border-bottom:1px solid #eee;
+      border-bottom:1px solid var(--bg);
       padding-bottom:12px;
       margin-bottom:12px;
     }
+
+    .hidden{
+      display: none;
+    }
+
+    #settingsBtn{
+      width:200px;
+      height:70px;
+
+      font-size:50px;
+      font-weight: bold;
+      
+      border:none;
+      background: transparent;
+
+      color: var(--surface);
+      cursor:pointer;
+      
+    }
+
+
+    #settingModal{
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform:translate(-50%,-50%);
+      width : 1000px;
+      padding:100px;
+
+      background:var(--lightaccent);
+      border-radius:20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      
+      z-index : 1000;
+    }
+
+    .setting-content{
+      font-size: 40px;
+      display:flex;
+      flex-direction: column;
+      gap:20px;
+    }
+
+
+    .theme-btn{
+      width:70px;
+      height:70px;
+      border-radius:50%;
+      border: 4px solid #ddd;
+      cursor:pointer;
+      margin:10px;
+    }
+
+    .theme-btn.pink{
+      background: #ff41df;
+    }
+
+    .theme-btn.blue{
+      background: #59b7ff;
+    }
+
+    .theme-btn.green{
+      background: #6ba060;
+    }
+
+    .theme-btn.black{
+      background: #000000;
+    }
+
+    .setting-divider{
+      height: 3px;
+      background: var(--text-secondary);
+      margin: 30px 0;
+    }
   </style>
-</head>
+  </head>
+  <body class="theme-black">
+    <div id="header">  
+      <h1 id = "main-title"> HKSK </h1>
+      <button id = "settingsBtn">Settings</button>
 
-<body>
 
-<h1 id = "main-title"> 이번 주 학식</h1>
+    </div>
+      
+      <div id ="title"></div>
+      <div id="buttonTabs"></div>
+      
+      <div class="toggle-container">
+        <div class="toggle-wrapper">
+          <span class="toggle-label">영업중 식당만 보기</span>
+          <label class = "switch">
+            <input type = "checkbox" id ="openOnlyToggle">
+            <span class ="slider round"></span>
+          </label>
+        </div>
+      </div>
 
-<div id="tabs"></div>
-<div id ="title">오늘의 메뉴</div>
+      <div id = "restaurantTabs"></div>
+      <div id="operatingHours"></div>
+      <div id="app"></div>
 
-<div id = "restaurantTabs"></div>
 
-<div id="app"></div>
 
-<script>
+      <div id="settingModal" class="hidden">
+
+
+        <div class="setting-content">
+          <div vlass="theme-setting">
+            <h2> Theme </h2> 
+            <button class="theme-btn pink"
+              data-theme ="theme-pink"></button>
+            <button class="theme-btn blue"
+              data-theme="theme-blue"></button>
+            <button class="theme-btn green"
+              data-theme="theme-green"></button>
+            <button class="theme-btn black"
+              data-theme="theme-black"></button>
+          </div>
+        
+          <div class="setting-divider"></div>
+          
+          <div class="semester-setting">          
+            <h2> Mode </h2>
+            <div class = "toggle-wrapper">
+              <span id ="seasonLabel" class="toggle-label">semester</span>
+              <label class = "switch">
+                <input type="checkbox" id = "seasonToggle">
+                <span class = "slider round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+
+          
+  <script>
+  
+
 const today = new Date();
 
 const month = today.getMonth() + 1;
@@ -127,25 +439,103 @@ const todayName = dayNames[today.getDay()];
 document.getElementById("title").textContent =
 `${month}월 ${date}일 (${todayName}) 메뉴 !`;
 
-fetch("./menu.json")
-  .then(res => res.json())
-  .then(data => {
+// 데이터 불러오기
+Promise.all([
+  fetch("./menu.json").then(res => res.json()),
+  fetch("./hours.json").then(res => res.json())
+])
+  .then(([menuData, hoursData]) => {
+
+
+    //설정창
+    const settingsBtn=document.getElementById("settingsBtn");
+    const modal = document.getElementById("settingModal");
+    settingsBtn.onclick=()=>{
+      settingModal.classList.toggle("hidden");
+    };
+
+    document.querySelectorAll(".theme-btn").forEach(btn=>{
+      btn.onclick=()=>{
+        document.body.className=
+        btn.dataset.theme;
+      };
+    });
 
     const app = document.getElementById("app");
-    const tabs = document.getElementById("tabs");
+    const buttonTabs = document.getElementById("buttonTabs");
     const restaurantTabs = document.getElementById("restaurantTabs");
+    const operatingHoursDiv = document.getElementById("operatingHours"); // 영업시간 엘리먼트
 
     const days = ["일","월","화","수","목","금","토"];
 
     let selectedCategory = "학생식당";
 
-    // ✅ 카테고리 보정 함수 (핵심)
-    function normalizeCategory(dayName) {
-      if (!data[dayName]) return "학생식당";
+    const seasonToggle = document.getElementById("seasonToggle");
+    const seasonLabel = document.getElementById("seasonLabel");
+    const openOnlyToggle = document.getElementById("openOnlyToggle");
 
-      const categories = [...new Set(
-        data[dayName].map(i => i.category)
-      )];
+    let currentSeason = "semester"
+    let isOpenOnly = false;
+    seasonToggle.onchange = (e) =>{
+      if (e.target.checked){
+        currentSeason ="vacation";
+        seasonLabel.textContent = "vacation";
+      } else{
+        currentSeason = "semester";
+        seasonLabel.textContent = "semester";
+      }
+      refreshUI();
+    };
+
+    openOnlyToggle.onchange =(e) =>{
+      isOpenOnly = e.target.checked;
+
+      if (isOpenOnly){
+        selectedCategory = normalizeCategory(todayName);
+        setDay(todayName,today.getDay());
+        renderDays();
+      } else{
+        refreshUI();
+      }
+    };
+
+    function refreshUI(){
+      renderDays();
+      const activeDayBtn =document.querySelector("#buttonTabs button.active");
+      const activeDayName = activeDayBtn ? activeDayBtn.textContent : todayName;
+      renderRestaurants(activeDayName);
+      render(activeDayName, selectedCategory);
+    };
+
+    function checkIsOpen(dayName,category){
+      try{
+        const timeObj = hoursData[currentSeason][category][dayName];
+        if (!timeObj || Object.keys(timeObj).length ==0) return false;
+
+        const now = new Date();
+        const nowMinutes = now.getHours()*60 + now.getMinutes();
+
+        return Object.values(timeObj).some(timeRange => {
+          const [start, end] = timeRange.split("-").map(t=>t.trim());
+
+          const [startHour,startMin] = start.split(":").map(Number);
+          const [endHour, endMin] = end.split(":").map(Number);
+
+          const startMinutes =startHour * 60 + startMin;
+          const endMinutes = endHour *60 +endMin;
+
+          return nowMinutes >=startMinutes && nowMinutes <=endMinutes;
+        });
+      } catch (e){
+        return false;
+      }
+    }
+
+    // 카테고리 보정
+    function normalizeCategory(dayName) {
+      if (!menuData[dayName]) return "학생식당";
+
+      const categories = Object.keys(hoursData[currentSeason]);
 
       if (categories.includes(selectedCategory)) return selectedCategory;
       if (categories.includes("학생식당")) return "학생식당";
@@ -153,18 +543,44 @@ fetch("./menu.json")
       return categories[0] || "학생식당";
     }
 
-    // ✅ 화면 렌더링
+    // 영업시간
+    function updateOperatingHours(dayName, category) {
+      try {
+        const timeObj = hoursData[currentSeason][category][dayName];
+        const timeEntries = Object.entries(timeObj || {});
+        
+        if (timeEntries.length === 0) {
+          operatingHoursDiv.textContent = "🕒 영업시간: 운영 없음";
+          return;
+        }
+
+        const timeText = timeEntries
+          .map(([menuType, timeRange]) => `${menuType} ${timeRange}`)
+          .join(" | ");
+
+        operatingHoursDiv.textContent = `🕒 영업시간: ${timeText}`;
+      } catch (e) {
+        operatingHoursDiv.textContent = "🕒 영업시간 정보 없음";
+      }
+    }
+
+    // 화면 렌더링
     function render(dayName, category) {
       app.innerHTML = "";
+      updateOperatingHours(dayName, category);
 
-      if (!data[dayName]) {
+      if (!menuData[dayName]) {
         app.innerHTML = "<div class='card'>데이터 없음</div>";
         return;
       }
 
-      const filtered = data[dayName].filter(
+      const filtered = menuData[dayName].filter(
         item => item.category === category
       );
+      if (filtered.length ===0){
+        app.innerHTML = "<div class='card'> 금일 휴무 </div>";
+        return;
+      }
 
       filtered.forEach(item => {
         const div = document.createElement("div");
@@ -193,21 +609,23 @@ fetch("./menu.json")
     });
   }
 
-    // ✅ 식당 버튼 렌더
+    // 식당 버튼 렌더
     function renderRestaurants(dayName) {
       restaurantTabs.innerHTML = "";
 
-      if (!data[dayName]) return;
+      if (!menuData[dayName]) return;
 
-      const categories = [...new Set(
-        data[dayName].map(i => i.category)
-      )];
+      const categories = Object.keys(hoursData[currentSeason]);
 
       categories.forEach(category => {
         const btn = document.createElement("button");
         btn.textContent = category;
         btn.classList.add("restaurant-btn");
-
+        
+        const isToday = dayName ===todayName;
+        if (isOpenOnly && (!isToday || !checkIsOpen(dayName,category))){
+          btn.classList.add("disabled");
+        }
         if (category === selectedCategory) {
           btn.classList.add("active");
         }
@@ -227,7 +645,7 @@ fetch("./menu.json")
       });
     }
 
-    // ✅ 요일 렌더
+    // 요일 렌더
     function setDay(dayName, index) {
 
       // 날짜 계산
@@ -242,9 +660,9 @@ fetch("./menu.json")
         `${m}월 ${d}일 (${dayName}) 메뉴 !`;
 
       // active UI
-      document.querySelectorAll("#tabs button")
+      document.querySelectorAll("#buttonTabs button")
         .forEach(b => b.classList.remove("active"));
-      document.querySelectorAll("#tabs button")[index]
+      document.querySelectorAll("#buttonTabs button")[index]
         ?.classList.add("active")
 
       // 상태 보정
@@ -253,26 +671,45 @@ fetch("./menu.json")
       // UI 갱신
       renderRestaurants(dayName);
       render(dayName, selectedCategory);
+      renderDays();
     }
 
-    // ✅ 요일 버튼 생성
-    days.forEach((dayName, index) => {
+    // 요일 버튼 생성
+
+    function renderDays(){
+      buttonTabs.innerHTML ="";
+
+      days.forEach((dayName, index) => {
       const btn = document.createElement("button");
       btn.textContent = dayName;
+
+      
+      if (isOpenOnly && dayName!==todayName){
+        btn.classList.add("disabled");
+      }
 
       if (dayName === todayName) {
         btn.classList.add("active");
       }
 
+
       btn.onclick = () => setDay(dayName, index);
 
-      tabs.appendChild(btn);
+      buttonTabs.appendChild(btn);
     });
+    }
 
     // 초기 실행
+    renderDays()
     setDay(todayName, today.getDay());
 
+  })
+  .catch(err => {
+    console.error("데이터를 불러오는데 실패했습니다:", err);
+    document.getElementById("operatingHours").textContent = "데이터 로드 실패";
   });
+  
 </script>
+
 </body>
 </html>
