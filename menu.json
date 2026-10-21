@@ -251,6 +251,20 @@
     },
     {
       "category": "학생식당",
+      "restaurant": "데일리밥 중식",
+      "sets": [
+        {
+          "name": "바지락수제비",
+          "price": 3900,
+          "items": [
+            "바지락수제비",
+            "무말랭이무침"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "학생식당",
       "restaurant": "채식 중식",
       "sets": [
         {
